@@ -30,7 +30,7 @@ llm = ChatOpenAI(model="gpt-3.5-turbo")
 
 stockPriceAnalyst = Agent(
     role="Analista de Ações",
-    goal="Encontrar o preço da ação {ticket} e analisar as tendências",
+    goal="Encontrar o preço da ação {ticket} e analisar as tendências em português.",
     backstory="""Você é altamente experiente em analisar o preço de uma ação específica e fazer previsões sobre seu preço futuro.""",
     verbose=True,
     llm= llm,
@@ -60,7 +60,7 @@ search_tool = DuckDuckGoSearchResults(backend='news', num_results=10)
 newsAnalyst = Agent(
     role="Analista de Notícias de Ações",
     goal="""Criar um resumo curto das notícias de mercado relacionadas à empresa de ações {ticket}. Especifique a tendência atual - alta, baixa ou lateral com
-    o contexto das notícias. Para cada ativo de ações solicitado, especifique um número entre 0 e 100, onde 0 é medo extremo e 100 é ganância extrema.""",
+    o contexto das notícias. Para cada ativo de ações solicitado, especifique um número entre 0 e 100, onde 0 é medo extremo e 100 é ganância extrema. em português.""",
     backstory="""Você é altamente experiente em analisar as tendências e notícias do mercado e acompanha ativos há mais de 10 anos.
 
     Você também é um analista de nível mestre nos mercados tradicionais e tem um profundo entendimento da psicologia humana.
@@ -97,22 +97,31 @@ get_news = Task(
 
 
 
-stockAnalystWrite = Agent(
-    role = "Senior Stock Analyts Writer",
-    goal= """"Analyze the trends price and news and write an insighfull compelling and informative 3 paragraph long newsletter based on the stock report and price trend. """,
-    backstory= """You're widely accepted as the best stock analyst in the market. You understand complex concepts and create compelling stories
-    and narratives that resonate with wider audiences. 
+# stockAnalystWrite = Agent(
+#     role = "Senior Stock Analyts Writer",
+#     goal= """"Analyze the trends price and news and write an insighfull compelling and informative 3 paragraph long newsletter based on the stock report and price trend. """,
+#     backstory= """You're widely accepted as the best stock analyst in the market. You understand complex concepts and create compelling stories
+#     and narratives that resonate with wider audiences. 
 
-    You understand macro factors and combine multiple theories - eg. cycle theory and fundamental analyses. 
-    You're able to hold multiple opinions when analyzing anything.
-""",
+#     You understand macro factors and combine multiple theories - eg. cycle theory and fundamental analyses. 
+#     You're able to hold multiple opinions when analyzing anything.
+# """,
+#     verbose = True,
+#     llm=llm,
+#     max_iter = 5,
+#     memory=True,
+#     allow_delegation = True
+# )
+stockAnalystWrite = Agent(
+    role = "Analista de Ações senior",
+    goal= """Use a tendência de preço da ação e o relatório de notícias da ação para criar uma análise e escrever o boletim informativo sobre a empresa {ticket} que seja breve e destaque os pontos mais importantes. Foque na tendência de preço da ação, notícias e pontuação de medo/ganância. Quais são as considerações para o futuro próximo? Inclua as análises anteriores da tendência de ações e resumo de notícias. respostas em português.""",
+    backstory= """Você é amplamente aceito como o melhor analista de ações do mercado. Você entende conceitos complexos e cria histórias e narrativas convincentes que ressoam com um público mais amplo. Você entende fatores macro e combina várias teorias - por exemplo, teoria do ciclo e análises fundamentais. Você é capaz de manter várias opiniões ao analisar qualquer coisa.""",
     verbose = True,
     llm=llm,
     max_iter = 5,
     memory=True,
     allow_delegation = True
 )
-
 
 writeAnalyses = Task(
     description = """Use a tendência de preço da ação e o relatório de notícias da ação para criar uma análise e escrever o boletim informativo sobre a empresa {ticket}
@@ -126,6 +135,7 @@ writeAnalyses = Task(
     - Introdução - defina a imagem geral e aumente o interesse
     - a parte principal fornece a essência da análise, incluindo o resumo de notícias e pontuações de medo/ganância
     - resumo - fatos-chave e previsão concreta de tendência futura - alta, baixa ou lateral.
+    respostas em português.
 """,
     agent = stockAnalystWrite,
     context = [getStockPrice, get_news]
